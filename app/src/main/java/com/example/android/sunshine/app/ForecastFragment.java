@@ -130,8 +130,10 @@ public class ForecastFragment extends Fragment {
             BufferedReader reader = null;
 
             String forecastJSON = null;
-
             String format = "json";
+          //  SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+         //   String units =prefs.getString(getString(R.string.pref_temp_key),getString(R.string.pref_temp_default));
             String units ="metric";
             int numDays = 7;
             String apiKey = BuildConfig.OPEN_WEATHER_API_KEY;
@@ -230,6 +232,17 @@ public class ForecastFragment extends Fragment {
      */
     private String formatHighLows(double high, double low) {
         // For presentation, assume the user doesn't care about tenths of a degree.
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String units = sharedPreferences.getString(getString(R.string.pref_temp_key),
+                getString(R.string.pref_temp_default));
+
+        if(units.equals(getString(R.string.pref_temp_imperial))){
+            high = (high*1.8)+32;
+            low = (low*1.8)+32;
+        } else if(!units.equals(R.string.pref_temp_default)){
+
+        }
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
 

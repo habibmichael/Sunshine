@@ -9,5 +9,14 @@
         android:singleLine="true"
         android:inputType="text"/>
 
+    <ListPreference
+        android:title="@string/pref_temp_label"
+        android:entries="@array/pref_temp_entries"
+        android:entryValues="@array/pref_temp_values"
+        android:defaultValue="@string/pref_temp_default"
+        android:key="@string/pref_temp_key"
+       />
+
+
 
 </PreferenceScreen>
