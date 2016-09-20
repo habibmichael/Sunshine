@@ -1,9 +1,11 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -40,6 +42,7 @@ public class ForecastFragment extends Fragment {
 
     ArrayAdapter<String> arrayAdapter;
 
+
     public ForecastFragment() {
     }
 
@@ -47,6 +50,9 @@ public class ForecastFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+
+
     }
 
     @Override
@@ -54,25 +60,32 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //Create temporary fake data for list view
-        ArrayList<String> fakeData = new ArrayList<>();
-        fakeData.add("Today - Blazing - 103/70");
-        fakeData.add("Tomorrow - Sunny - 90/65");
-        fakeData.add("Weds - Clear - 80/59");
-        fakeData.add("Thurs - Sunny - 95/65");
-        fakeData.add("Friday - Blazing - 100/70");
-        fakeData.add("Saturday - Sunny - 80/65");
 
         //Array Adapter binding to List View
          arrayAdapter = new ArrayAdapter<>(getActivity(),
-                R.layout.list_item_forecast,R.id.list_item_forecast_textview,fakeData);
+                R.layout.list_item_forecast,R.id.list_item_forecast_textview,new ArrayList<String>());
 
         ListView forecastListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         forecastListView.setAdapter(arrayAdapter);
         forecastListView.setOnItemClickListener(listViewListener);
 
+
         return rootView;
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    private void updateWeather(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String zipPreference = prefs.getString(getString(R.string.pref_location_key),getString(R.string.pref_location_default));
+        //Refresh weather with value in location settings
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        weatherTask.execute(zipPreference);
     }
 
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
@@ -100,10 +113,8 @@ public class ForecastFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
        if(id==R.id.action_refresh){
-           FetchWeatherTask weatherTask = new FetchWeatherTask();
-           weatherTask.execute("91326");
+           updateWeather();
             return true;
         }
 
