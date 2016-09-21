@@ -16,5 +16,6 @@
     <string name="pref_temp_key">temp_units</string>
     <string name="pref_temp_imperial">imperial</string>
     <string name="action_map">Map Location</string>
+    <string name="share">Share</string>
 
 </resources>
