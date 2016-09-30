@@ -60,12 +60,7 @@ public class ForecastFragment extends Fragment implements  LoaderManager.LoaderC
     public static final int FORECAST_LOADER_ID = 1;
 
     private static final String[] FORECAST_COLUMNS = {
-            // In this case the id needs to be fully qualified with a table name, since
-            // the content provider joins the location & weather tables in the background
-            // (both have an _id column)
-            // On the one hand, that's annoying.  On the other, you can search the weather table
-            // using the location set by the user, which is only in the Location table.
-            // So the convenience is worth it.
+
             WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
             WeatherContract.WeatherEntry.COLUMN_DATE,
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
@@ -117,7 +112,7 @@ public class ForecastFragment extends Fragment implements  LoaderManager.LoaderC
 
         ListView forecastListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         forecastListView.setAdapter(mForecastAdapter);
-        //forecastListView.setOnItemClickListener(listViewListener);
+        forecastListView.setOnItemClickListener(listViewListener);
 
 
 
@@ -138,10 +133,10 @@ public class ForecastFragment extends Fragment implements  LoaderManager.LoaderC
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+
+    public void onLocationChanged(){
         updateWeather();
+        getLoaderManager().restartLoader(FORECAST_LOADER_ID,null,this);
     }
 
     private void updateWeather(){
@@ -151,20 +146,24 @@ public class ForecastFragment extends Fragment implements  LoaderManager.LoaderC
         FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(),mForecastAdapter);
         weatherTask.execute(zipPreference);
     }
-/*
+
     private AdapterView.OnItemClickListener listViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            String selectedForecast;
-            Intent intent = new Intent(getActivity(),DetailActivity.class);
-         //  selectedForecast= mForecastAdapter.getItem(position);
-        //    intent.putExtra(Intent.EXTRA_TEXT,selectedForecast);
-            startActivity(intent);
+            Cursor cursor = (Cursor)parent.getItemAtPosition(position);
+            if(cursor!=null){
+                String locationSetting = Utility.getPreferredLocation(getActivity());
+                Intent i = new Intent(getActivity(),DetailActivity.class)
+                        .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                                locationSetting,cursor.getLong(COL_WEATHER_DATE)
+                        ));
+                startActivity(i);
+
+            }
 
         }
     };
-    */
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -230,7 +229,7 @@ public class ForecastFragment extends Fragment implements  LoaderManager.LoaderC
         String locationSetting = Utility.getPreferredLocation(getActivity());
 
         //Sort order: Ascending,by date
-        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE+"ASC";
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE+" ASC";
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
                 locationSetting,System.currentTimeMillis());
 

@@ -26,16 +26,41 @@ import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity {
 
+    String mLocation;
+    private final String FORECAST_TAG = "FORECAST_TAG";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mLocation=Utility.getPreferredLocation(this);
+
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_container, new ForecastFragment())
+                    .add(R.id.main_container, new ForecastFragment(),FORECAST_TAG)
                     .commit();
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        String savedLocation = Utility.getPreferredLocation(this);
+        if(savedLocation!=null&&!(mLocation.equals(savedLocation))){
+
+            ForecastFragment forecastFragment = (ForecastFragment)getSupportFragmentManager()
+                    .findFragmentByTag(FORECAST_TAG);
+
+            if(forecastFragment!=null){
+                forecastFragment.onLocationChanged();
+            }
+
+            mLocation=savedLocation;
+        }
+
     }
 
     @Override

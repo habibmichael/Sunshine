@@ -129,7 +129,7 @@ public class WeatherProvider extends ContentProvider {
 
         matcher.addURI(authority,WeatherContract.PATH_WEATHER,WEATHER);
         matcher.addURI(authority,WeatherContract.PATH_WEATHER+"/*",WEATHER_WITH_LOCATION);
-        matcher.addURI(authority,WeatherContract.PATH_WEATHER+"/x/#",WEATHER_WITH_LOCATION_AND_DATE);
+        matcher.addURI(authority,WeatherContract.PATH_WEATHER+"/*/#",WEATHER_WITH_LOCATION_AND_DATE);
         matcher.addURI(authority,WeatherContract.PATH_LOCATION,LOCATION);
 
         return matcher;
