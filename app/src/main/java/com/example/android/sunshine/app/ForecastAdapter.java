@@ -61,7 +61,7 @@ public class ForecastAdapter extends CursorAdapter {
      */
     private String formatHighLows(double high, double low) {
         boolean isMetric = Utility.isMetric(mContext);
-        String highLowStr = Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric);
+        String highLowStr = Utility.formatTemperature(mContext,high, isMetric) + "/" + Utility.formatTemperature(mContext,low, isMetric);
         return highLowStr;
     }
 
@@ -150,10 +150,10 @@ public class ForecastAdapter extends CursorAdapter {
 
         // Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        viewHolder.highTempTextView.setText(Utility.formatTemperature(high,isMetric));
+        viewHolder.highTempTextView.setText(Utility.formatTemperature(context,high,isMetric));
 
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-        viewHolder.lowTempTextView.setText(Utility.formatTemperature(low,isMetric));
+        viewHolder.lowTempTextView.setText(Utility.formatTemperature(context,low,isMetric));
 
     }
 
@@ -169,7 +169,7 @@ public class ForecastAdapter extends CursorAdapter {
 
             iconView=(ImageView)view.findViewById(R.id.list_item_icon);
             dateView=(TextView)view.findViewById(R.id.list_item_date_textview);
-            descriptionView=(TextView)view.findViewById(R.id.forecast_detail);
+            descriptionView=(TextView)view.findViewById(R.id.list_item_forecast_textview);
             highTempTextView=(TextView)view.findViewById(R.id.list_item_high_textview);
             lowTempTextView=(TextView)view.findViewById(R.id.list_item_low_textview);
 
