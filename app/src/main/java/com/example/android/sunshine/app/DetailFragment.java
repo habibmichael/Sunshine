@@ -184,10 +184,18 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 data.getDouble(COL_WEATHER_MIN_TEMP),isMetric);
         lowTempTextView.setText(low);
 
-        mForecastStr = String.format("%s - %s - %s/%s",dateText,weatherDescription,
-                high,low);
+        float humidity = data.getFloat(COL_WEATHER_HUMIDITY);
+        humidityTextView.setText(getActivity().getString(R.string.format_humidity,humidity));
+
+        float windSpeedStr = data.getFloat(COL_WEATHER_WIND_SPEED);
+        float windDirStr = data.getFloat(COL_WEATHER_DEGREES);
+        windTextView.setText(Utility.getFormattedWind(getActivity(),windSpeedStr,windDirStr));
+
+        float pressure = data.getFloat(COL_WEATHER_PRESSURE);
+        pressureTextView.setText(getActivity().getString(R.string.format_pressure,pressure));
 
 
+        mForecastStr = String.format("%s - %s - %s/%s",dateText,weatherDescription,high,low);
 
 
         if(mShareActionProvider!=null){
